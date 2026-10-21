@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict y3RTLcaItUBOsaf1oraZn4v6C52eC045NBYN3H63owfOMvbS4X6vylF7QDUcuy0
+\restrict AedEjDfUklIVmksNE1tRQT1F9icqjjsFZHhUdmtgVc0qA2JSDBPHpncIuvLdwsP
 
 -- Dumped from database version 18.6 (Debian 18.6-1.pgdg13+2)
 -- Dumped by pg_dump version 18.6 (Debian 18.6-1.pgdg13+2)
@@ -66,10 +66,10 @@ CREATE TABLE public.goods (
 ALTER TABLE public.goods OWNER TO app;
 
 --
--- Name: order; Type: TABLE; Schema: public; Owner: app
+-- Name: orders; Type: TABLE; Schema: public; Owner: app
 --
 
-CREATE TABLE public."order" (
+CREATE TABLE public.orders (
     id integer NOT NULL,
     user_id integer NOT NULL,
     status character varying(50) NOT NULL,
@@ -77,22 +77,7 @@ CREATE TABLE public."order" (
 );
 
 
-ALTER TABLE public."order" OWNER TO app;
-
---
--- Name: order_item; Type: TABLE; Schema: public; Owner: app
---
-
-CREATE TABLE public.order_item (
-    id integer NOT NULL,
-    order_id integer NOT NULL,
-    goods_id integer NOT NULL,
-    quantity integer NOT NULL,
-    final_price numeric(10,2) NOT NULL
-);
-
-
-ALTER TABLE public.order_item OWNER TO app;
+ALTER TABLE public.orders OWNER TO app;
 
 --
 -- Name: user; Type: TABLE; Schema: public; Owner: app
@@ -113,11 +98,6 @@ ALTER TABLE public."user" OWNER TO app;
 --
 
 COPY public.brand (id, name, country) FROM stdin;
-1	Bosch	Німеччина
-2	Brembo	Італія
-3	Mann-Filter	Німеччина
-4	KYB	Японія
-5	Denso	Японія
 \.
 
 
@@ -126,10 +106,6 @@ COPY public.brand (id, name, country) FROM stdin;
 --
 
 COPY public.category (id, name, characteristic) FROM stdin;
-1	Двигун та система вихлопу	Деталі поршневої групи, ремені ГРМ, фільтри
-2	Гальмівна система	Гальмівні колодки, диски, супорти та рідина
-3	Підвіска та рульове управління	Амортизатори, важелі, сайлентблоки, тяги
-4	Автоелектрика та освітлення	Акумулятори, генератори, свічки, лампи
 \.
 
 
@@ -138,38 +114,14 @@ COPY public.category (id, name, characteristic) FROM stdin;
 --
 
 COPY public.goods (id, name, category_id, price, brand_id, availability) FROM stdin;
-1	Фільтр масляний W 712/75	1	380.00	3	25
-2	Комплект гальмівних колодок передніх P 85 020	2	1650.00	2	14
-3	Амортизатор газомасляний передній Excel-G	3	2450.00	4	8
-4	Свічка запалювання Iridium Power IK20	4	420.00	5	40
-5	Гальмівний диск вентильований 09.9772.11	2	2890.00	2	6
-6	Акумулятор S4 008 74Ah 680A	4	4100.00	1	5
 \.
 
 
 --
--- Data for Name: order; Type: TABLE DATA; Schema: public; Owner: app
+-- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: app
 --
 
-COPY public."order" (id, user_id, status, delivery_address) FROM stdin;
-1	1	completed	м. Чернігів, Нова Пошта №5
-2	2	processing	м. Київ, Нова Пошта №12
-3	1	shipped	м. Чернігів, вул. Рокоссовського, 14
-4	3	new	м. Ніжин, Нова Пошта №1
-\.
-
-
---
--- Data for Name: order_item; Type: TABLE DATA; Schema: public; Owner: app
---
-
-COPY public.order_item (id, order_id, goods_id, quantity, final_price) FROM stdin;
-1	1	1	1	380.00
-2	1	2	1	1650.00
-3	2	3	2	4900.00
-4	3	4	4	1680.00
-5	4	5	2	5780.00
-6	4	6	1	4100.00
+COPY public.orders (id, user_id, status, delivery_address) FROM stdin;
 \.
 
 
@@ -178,9 +130,6 @@ COPY public.order_item (id, order_id, goods_id, quantity, final_price) FROM stdi
 --
 
 COPY public."user" (id, name, email, phone_number) FROM stdin;
-1	Тарас Кравченко	taras.kravchenko@gmail.com	+380671112233
-2	Василь Дмитренко	v.dmytrenko@ukr.net	+380504445566
-3	Сергій Мельник	melnyk.auto@gmail.com	+380937778899
 \.
 
 
@@ -209,19 +158,11 @@ ALTER TABLE ONLY public.goods
 
 
 --
--- Name: order_item order_item_pkey; Type: CONSTRAINT; Schema: public; Owner: app
+-- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: app
 --
 
-ALTER TABLE ONLY public.order_item
-    ADD CONSTRAINT order_item_pkey PRIMARY KEY (id);
-
-
---
--- Name: order order_pkey; Type: CONSTRAINT; Schema: public; Owner: app
---
-
-ALTER TABLE ONLY public."order"
-    ADD CONSTRAINT order_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
 
 
 --
@@ -257,26 +198,10 @@ ALTER TABLE ONLY public.goods
 
 
 --
--- Name: order_item fk_order_item_goods; Type: FK CONSTRAINT; Schema: public; Owner: app
+-- Name: orders fk_order_user; Type: FK CONSTRAINT; Schema: public; Owner: app
 --
 
-ALTER TABLE ONLY public.order_item
-    ADD CONSTRAINT fk_order_item_goods FOREIGN KEY (goods_id) REFERENCES public.goods(id);
-
-
---
--- Name: order_item fk_order_item_order; Type: FK CONSTRAINT; Schema: public; Owner: app
---
-
-ALTER TABLE ONLY public.order_item
-    ADD CONSTRAINT fk_order_item_order FOREIGN KEY (order_id) REFERENCES public."order"(id) ON DELETE CASCADE;
-
-
---
--- Name: order fk_order_user; Type: FK CONSTRAINT; Schema: public; Owner: app
---
-
-ALTER TABLE ONLY public."order"
+ALTER TABLE ONLY public.orders
     ADD CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES public."user"(id);
 
 
@@ -284,5 +209,5 @@ ALTER TABLE ONLY public."order"
 -- PostgreSQL database dump complete
 --
 
-\unrestrict y3RTLcaItUBOsaf1oraZn4v6C52eC045NBYN3H63owfOMvbS4X6vylF7QDUcuy0
+\unrestrict AedEjDfUklIVmksNE1tRQT1F9icqjjsFZHhUdmtgVc0qA2JSDBPHpncIuvLdwsP
 

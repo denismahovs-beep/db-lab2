@@ -28,7 +28,7 @@ CREATE TABLE "user" (
     phone_number VARCHAR(50)
 );
 
-CREATE TABLE "order" (
+CREATE TABLE "orders" (
     id INT PRIMARY KEY,
     user_id INT NOT NULL,
     status VARCHAR(50) NOT NULL,
@@ -42,6 +42,12 @@ CREATE TABLE order_item (
     goods_id INT NOT NULL,
     quantity INT NOT NULL,
     final_price DECIMAL(10, 2) NOT NULL,
-    CONSTRAINT fk_order_item_order FOREIGN KEY (order_id) REFERENCES "order"(id) ON DELETE CASCADE,
+    CONSTRAINT fk_order_item_order FOREIGN KEY (order_id) REFERENCES "orders"(id) ON DELETE CASCADE,
     CONSTRAINT fk_order_item_goods FOREIGN KEY (goods_id) REFERENCES goods(id)
 );
+
+CREATE INDEX idx_goods_category_id ON goods(category_id);
+CREATE INDEX idx_goods_brand_id ON goods(brand_id);
+CREATE INDEX idx_orders_user_id ON "orders"(user_id);
+CREATE INDEX idx_order_item_order_id ON order_item(order_id);
+CREATE INDEX idx_order_item_goods_id ON order_item(goods_id);
